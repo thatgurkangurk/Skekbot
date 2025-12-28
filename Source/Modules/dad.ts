@@ -6,7 +6,7 @@ const IM = ["im", "i'm", "i’m"];
 const MAX_LENGTH = 50;
 
 async function onMessage(message: Message) {
-	if (message.author === message.client.user) return;
+	if (message.author.bot) return;
 
 	const content = message.cleanContent;
 	const lowerContent = content.toLowerCase();
