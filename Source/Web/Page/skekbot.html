@@ -5,14 +5,22 @@
 		<title>Skekbot</title>
 		<meta name="robots" content="noindex">
         <meta name="color-scheme" content="light dark">
-		<link rel="icon" type="image/png" href="favicon.png">
+		<link rel="icon" type="image/png" href="skekbot.png">
 	</head>
 
 	<body>
-		<textarea id="message-box"></textarea>
-		<input id="channel-input" type="number">
-		<input id="reply-input" type="number">
-		<button id="message-button">Send!</button>
+		<form name="message-form" action="">
+			<label for="message-box">Message</label>
+			<textarea id="message-box"></textarea>
+
+			<label for="channel-input">Channel</label>
+			<input id="channel-input" type="number">
+
+			<label for="reply-input">Reply</label>
+			<input id="reply-input" type="number">
+
+			<input id="message-button" type="submit" value="Send!"></input>
+		</form>
 
 		<script src="./skekbot.js"></script>
 	</body>
