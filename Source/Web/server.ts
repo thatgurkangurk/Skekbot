@@ -17,6 +17,10 @@ app.get("/", (_, res) => {
 	res.send("BLANK PAGE.");
 });
 
+app.use(express.static("Source/Web/Page", {
+	extensions: ["html"]
+}));
+
 app.post("/send-message", async (req, res) => {
 	const messageRequest = MessageRequest.parse(req.body);
 
@@ -29,5 +33,5 @@ app.post("/send-message", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-	console.log(`Web interface starting on port ${PORT}!`);
+	console.log(`Web interface starting on port ${PORT}.`);
 });
