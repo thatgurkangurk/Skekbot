@@ -9,6 +9,7 @@ const app = express();
 const MessageRequest = z.object({
 	channelId: z.string(),
 	message: z.string(),
+	replyToId: z.string(),
 });
 
 app.use(express.json());
@@ -27,7 +28,13 @@ app.post("/send-message", async (req, res) => {
 	const channel = await client.channels.fetch(messageRequest.channelId);
 	if (!channel || !channel.isSendable()) throw new Error("Bad channel");
 
-	channel.send(messageRequest.message);
+	const replyToMessage = messageRequest.replyToId ? await channel.messages.fetch(messageRequest.replyToId) : undefined;
+
+	if (replyToMessage) {
+		replyToMessage.reply(messageRequest.message);
+	} else {
+		channel.send(messageRequest.message);
+	}
 
 	res.send("Success!");
 });
