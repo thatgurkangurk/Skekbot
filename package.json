@@ -23,14 +23,15 @@
 		"lint": "eslint --ext .js,.ts ."
 	},
 	"dependencies": {
+		"@hono/node-server": "^1.19.7",
+		"@hono/zod-validator": "^0.7.6",
 		"discord.js": "^14.23.2",
-		"express": "^5.2.1",
+		"hono": "^4.11.3",
 		"zod": "^4.2.1"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.38.0",
 		"@stylistic/eslint-plugin": "^5.5.0",
-		"@types/express": "^5.0.6",
 		"@types/node": "^24.8.1",
 		"eslint": "^9.38.0",
 		"globals": "^16.4.0",
