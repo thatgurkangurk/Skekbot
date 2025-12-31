@@ -1,24 +1,17 @@
-import express from "express";
+import { Hono } from "hono";
 import client from "../client.ts";
-import * as z from "zod";
+import * as z from "zod/v4";
+import { prettyJSON } from "hono/pretty-json";
+import { serveStatic } from "@hono/node-server/serve-static";
+import { bearerAuth } from "hono/bearer-auth";
+import { serve } from "@hono/node-server";
+import { zValidator } from "@hono/zod-validator";
 
-const WEB_TOKEN = process.env["WEB_TOKEN"];
+const token = process.env["WEB_TOKEN"]!;
 
-function authenticatedRoute(
-	req: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) {
-	if (req.headers.authorization !== `Bearer ${WEB_TOKEN}`) {
-		return res.status(401).send({ message: "invalid key" });
-	}
+const PORT = 3000;
 
-	return next();
-}
-
-const PORT = 443;
-
-const app = express();
+const app = new Hono();
 
 const MessageRequest = z.object({
 	channelId: z.string(),
@@ -26,37 +19,54 @@ const MessageRequest = z.object({
 	replyToId: z.string(),
 });
 
-app.use(express.json());
+app.use(prettyJSON());
 
-app.get("/", (_, res) => {
-	res.send("BLANK PAGE.");
+app.get("/", (c) => {
+	return c.text("BLANK PAGE.");
 });
 
 app.use(
-	express.static("Source/Web/Page", {
-		extensions: ["html"],
+	"*",
+	serveStatic({
+		root: "Source/Web/Page",
+		rewriteRequestPath: (path) => {
+			// if the path already has an extension, leave it alone
+			if (path.includes(".")) {
+				return path;
+			}
+
+			// if not, try serving `<path>.html`
+			return `${path}.html`;
+		},
 	})
 );
 
-app.use(authenticatedRoute).post("/send-message", async (req, res) => {
-	const messageRequest = MessageRequest.parse(req.body);
+app
+	.use(bearerAuth({ token }))
+	.post("/send-message", zValidator("json", MessageRequest), async (c) => {
+		const messageRequest = c.req.valid("json");
 
-	const channel = await client.channels.fetch(messageRequest.channelId);
-	if (!channel || !channel.isSendable()) throw new Error("Bad channel");
+		const channel = await client.channels.fetch(messageRequest.channelId);
+		if (!channel || !channel.isSendable()) throw new Error("Bad channel");
 
-	const replyToMessage = messageRequest.replyToId
-		? await channel.messages.fetch(messageRequest.replyToId)
-		: undefined;
+		const replyToMessage = messageRequest.replyToId
+			? await channel.messages.fetch(messageRequest.replyToId)
+			: undefined;
 
-	if (replyToMessage) {
-		replyToMessage.reply(messageRequest.message);
-	} else {
-		channel.send(messageRequest.message);
-	}
+		if (replyToMessage) {
+			replyToMessage.reply(messageRequest.message);
+		} else {
+			channel.send(messageRequest.message);
+		}
 
-	res.send("Success!");
+		return c.text("Success!");
+	});
+
+const server = serve({
+	port: PORT,
+	fetch: app.fetch,
 });
 
-app.listen(PORT, () => {
+server.addListener("listening", () => {
 	console.log(`Web interface starting on port ${PORT}.`);
 });
