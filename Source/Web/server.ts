@@ -9,7 +9,6 @@ function authenticatedRoute(
 	res: express.Response,
 	next: express.NextFunction
 ) {
-	console.log("AUTH HEADER IS", req.headers.authorization);
 	if (req.headers.authorization !== `Bearer ${WEB_TOKEN}`) {
 		return res.status(401).send({ message: "invalid key" });
 	}
