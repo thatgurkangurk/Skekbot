@@ -7,7 +7,7 @@ import { bearerAuth } from "hono/bearer-auth";
 import { serve } from "@hono/node-server";
 import { zValidator } from "@hono/zod-validator";
 
-const token = process.env["WEB_TOKEN"]!;
+const password = process.env["WEB_PASSWORD"]!;
 
 const PORT = 443;
 
@@ -42,7 +42,7 @@ app.use(
 );
 
 app
-	.use(bearerAuth({ token }))
+	.use(bearerAuth({ token: password }))
 	.post("/send-message", zValidator("json", MessageRequest), async (c) => {
 		const messageRequest = c.req.valid("json");
 
