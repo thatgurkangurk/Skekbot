@@ -2,7 +2,22 @@ import express from "express";
 import client from "../client.ts";
 import * as z from "zod";
 
-const PORT = 443;
+const WEB_TOKEN = process.env["WEB_TOKEN"];
+
+function authenticatedRoute(
+	req: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) {
+	console.log("AUTH HEADER IS", req.headers.authorization);
+	if (req.headers.authorization !== `Bearer ${WEB_TOKEN}`) {
+		return res.status(401).send({ message: "invalid key" });
+	}
+
+	return next();
+}
+
+const PORT = 3000;
 
 const app = express();
 
@@ -18,17 +33,21 @@ app.get("/", (_, res) => {
 	res.send("BLANK PAGE.");
 });
 
-app.use(express.static("Source/Web/Page", {
-	extensions: ["html"]
-}));
+app.use(
+	express.static("Source/Web/Page", {
+		extensions: ["html"],
+	})
+);
 
-app.post("/send-message", async (req, res) => {
+app.use(authenticatedRoute).post("/send-message", async (req, res) => {
 	const messageRequest = MessageRequest.parse(req.body);
 
 	const channel = await client.channels.fetch(messageRequest.channelId);
 	if (!channel || !channel.isSendable()) throw new Error("Bad channel");
 
-	const replyToMessage = messageRequest.replyToId ? await channel.messages.fetch(messageRequest.replyToId) : undefined;
+	const replyToMessage = messageRequest.replyToId
+		? await channel.messages.fetch(messageRequest.replyToId)
+		: undefined;
 
 	if (replyToMessage) {
 		replyToMessage.reply(messageRequest.message);
