@@ -17,7 +17,7 @@ function authenticatedRoute(
 	return next();
 }
 
-const PORT = 3000;
+const PORT = 443;
 
 const app = express();
 
