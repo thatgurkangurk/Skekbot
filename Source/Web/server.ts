@@ -9,7 +9,7 @@ import { zValidator } from "@hono/zod-validator";
 
 const token = process.env["WEB_TOKEN"]!;
 
-const PORT = 3000;
+const PORT = 443;
 
 const app = new Hono();
 
