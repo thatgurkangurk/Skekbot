@@ -19,7 +19,7 @@
 	"type": "module",
 	"main": "Source/index.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node --env-file=.env .",
 		"lint": "eslint --ext .js,.ts ."
 	},
 	"dependencies": {
