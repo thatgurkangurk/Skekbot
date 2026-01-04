@@ -3,29 +3,36 @@
 <html>
 	<head>
 		<title>Skekbot</title>
-		<meta name="robots" content="noindex">
-        <meta name="color-scheme" content="light dark">
-		<link rel="icon" type="image/png" href="skekbot.png">
-		<link rel="stylesheet" href="common.css">
+		<meta name="robots" content="noindex" />
+		<meta name="color-scheme" content="light dark" />
+		<link rel="icon" type="image/png" href="skekbot.png" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css"
+		/>
 	</head>
 
 	<body>
-		<form name="message-form" action="javascript:void(0);">
-			<label for="password-input">Password</label>
-			<input id="password-input" type="password"></textarea>
+		<main class="container">
+			<form name="message-form" action="javascript:void(0);">
+				<fieldset>
+					<label for="password-input">Password</label>
+					<input id="password-input" type="password" required />
 
-			<label for="message-box">Message</label>
-			<textarea id="message-box"></textarea>
+					<label for="message-box">Message</label>
+					<textarea id="message-box" required></textarea>
 
-			<label for="channel-input">Channel</label>
-			<input id="channel-input" type="number">
+					<label for="channel-input">Channel</label>
+					<input id="channel-input" type="number" required />
 
-			<label for="reply-input">Reply</label>
-			<input id="reply-input" type="number">
+					<label for="reply-input">Reply</label>
+					<input id="reply-input" type="number" />
+				</fieldset>
 
-			<input id="message-button" type="submit" value="Send!"></input>
-		</form>
+				<button id="message-button" type="submit">Send!</button>
+			</form>
+		</main>
 
-		<script src="./skekbot.js"></script>
+		<script src="./skekbot.js" defer></script>
 	</body>
 </html>
