@@ -4,7 +4,7 @@ const messageArea = /** @type {HTMLTextAreaElement | null} */ (
 	document.getElementById("message-box")
 );
 
-const sendButton = /** @type {HTMLInputElement | null} */ (
+const sendButton = /** @type {HTMLButtonElement | null} */ (
 	document.getElementById("message-button")
 );
 
@@ -26,6 +26,8 @@ sendButton?.addEventListener("click", async () => {
 		return;
 	}
 
+	sendButton.ariaBusy = "true";
+
 	const response = await fetch("send-message", {
 		body: JSON.stringify({
 			channelId: channelInput.value,
@@ -39,6 +41,9 @@ sendButton?.addEventListener("click", async () => {
 		method: "POST",
 	});
 
+
 	const output = await response.text();
 	alert(output);
+
+	sendButton.ariaBusy = "false";
 });
