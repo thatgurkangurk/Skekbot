@@ -15,7 +15,9 @@ export default defineConfig([
 		},
 		extends: ["js/recommended"],
 		languageOptions: {
-			globals: globals.node
+			globals: {
+				...globals.node,
+			},
 		},
 
 		linterOptions: {
@@ -60,4 +62,10 @@ export default defineConfig([
 			"no-unused-vars": ["off"],
 		},
 	},
+	{
+		files: ["Source/Web/Page/**/*.{js,mjs,cjs,ts,mts,cts}"],
+		languageOptions: {
+			globals: globals.browser
+		}
+	}
 ]);
