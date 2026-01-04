@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // @ts-check
 
 const messageArea = /** @type {HTMLTextAreaElement | null} */ (
