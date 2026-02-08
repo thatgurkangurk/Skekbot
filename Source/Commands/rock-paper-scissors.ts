@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, SlashCommandBuilder, User } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, DiscordAPIError, SlashCommandBuilder, User } from "discord.js";
 import type { CommandInterface } from "../Types/command-interface.ts";
 
 const options = {
@@ -8,18 +8,40 @@ const options = {
 };
 
 async function announce(buttonInteraction: ButtonInteraction, user1: User, user2: User, user1Choice: string, user2Choice: string) {
-	let outcome;
+	let outcome: string;
+	const losers: User[] = [];
 
 	if (user1Choice === user2Choice) {
-		outcome = user1 === user2 ? "You played yourself and tied!" : "It's a tie!";
+		if (user1 === user2) {
+			outcome = "You played yourself and tied!";
+			losers.push(user1);
+		} else {
+			outcome = "It's a tie!";
+			losers.push(user1, user2);
+		}
 	} else if (
 		(user1Choice === "Rock" && user2Choice === "Scissors") ||
 		(user1Choice === "Scissors" && user2Choice === "Paper") ||
 		(user1Choice === "Paper" && user2Choice === "Rock") )
 	{
 		outcome = user1 === user2 ? "You played yourself and won!" : `${user1} wins!`;
+		losers.push(user2);
 	} else {
 		outcome = user1 === user2 ? "You played yourself and lost!" : `${user2} wins!`;
+		losers.push(user1);
+	}
+
+	const guild = buttonInteraction.guild;
+	if (guild) {
+		losers.forEach(async (loser) => {
+			if (loser === buttonInteraction.client.user) return;
+			try {
+				await (await guild.members.fetch(loser)).timeout(60000, "Loser!");
+			} catch(e) {
+				if (e instanceof DiscordAPIError) return;
+				console.log("Error: " + (e as Error));
+			}
+		});
 	}
 
 	await buttonInteraction.reply({
