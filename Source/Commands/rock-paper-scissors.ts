@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, DiscordAPIError, MessageFlags, SlashCommandBuilder, User } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, DiscordAPIError, MessageFlags, SlashCommandBuilder, User } from "discord.js";
 import type { CommandInterface } from "../Types/command-interface.ts";
 
 const options = {
@@ -7,9 +7,13 @@ const options = {
 	Scissors: "✂️",
 };
 
-async function announce(buttonInteraction: ButtonInteraction, user1: User, user2: User, user1Choice: string, user2Choice: string) {
+async function announce(interaction: ChatInputCommandInteraction, buttonInteraction: ButtonInteraction, user1: User, user2: User, user1Choice: string, user2Choice: string) {
 	let outcome: string;
 	const losers: User[] = [];
+
+	(await interaction.fetchReply()).edit({
+		components: [],
+	});
 
 	if (user1Choice === user2Choice) {
 		if (user1 === user2) {
@@ -115,7 +119,7 @@ const command: CommandInterface = {
 
 			if (user1Choice && user2Choice) {
 				collector.stop();
-				await announce(buttonInteraction, initiator, against, user1Choice, user2Choice);
+				await announce(interaction, buttonInteraction, initiator, against, user1Choice, user2Choice);
 				return;
 			}
 
