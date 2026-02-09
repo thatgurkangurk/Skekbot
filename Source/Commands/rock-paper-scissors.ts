@@ -29,10 +29,10 @@ async function announce(interaction: ChatInputCommandInteraction, buttonInteract
 		(user1Choice === "Paper" && user2Choice === "Rock") )
 	{
 		outcome = user1 === user2 ? "You played yourself and won!" : `${user1} wins!`;
-		losers.push(user2);
+		if (user1 !== user2) losers.push(user2);
 	} else {
 		outcome = user1 === user2 ? "You played yourself and lost!" : `${user2} wins!`;
-		losers.push(user1);
+		if (user1 !== user2) losers.push(user1);
 	}
 
 	const guild = buttonInteraction.guild;
