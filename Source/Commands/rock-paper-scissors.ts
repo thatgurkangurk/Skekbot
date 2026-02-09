@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, DiscordAPIError, SlashCommandBuilder, User } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, DiscordAPIError, MessageFlags, SlashCommandBuilder, User } from "discord.js";
 import type { CommandInterface } from "../Types/command-interface.ts";
 
 const options = {
@@ -99,6 +99,12 @@ const command: CommandInterface = {
 
 			if (user === initiator) user1Choice = id;
 			else if (user === against) user2Choice = id;
+			else {
+				await buttonInteraction.reply({
+					content: "You aren't a part of this battle!",
+					flags: [MessageFlags.Ephemeral]
+				});
+			}
 
 			if (against.bot || against === initiator) {
 				const botChoice = Object.keys(options)[Math.floor(Math.random() * Object.keys(options).length)];
