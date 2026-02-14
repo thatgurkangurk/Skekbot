@@ -78,7 +78,12 @@ async function onMessage(message: Message) {
 	// I HAVE SHOT MYSELF IN THE FOOT WITH THIS GOD FORSAKEN FUNCTION TOO MANY TIMES
 	// SERIOUSLY
 	// amount of times i banged my head in the wall: 34
-	await message.reply(`maybe the ${noun} hidden`);
+	await message.reply({
+		content: `maybe the ${noun} hidden`,
+		allowedMentions: {
+			repliedUser: false,
+		},
+	});
 }
 
 const module: ModuleInterface = {
