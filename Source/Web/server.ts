@@ -17,7 +17,7 @@ const MessageRequest = z.object({
 
 const app = new Elysia()
 	.get("/", "BLANK PAGE.")
-	.get("/status", async () => {
+	.get("/status", () => {
 		const clientReady = client.isReady();
 
 		return {
@@ -46,9 +46,9 @@ const app = new Elysia()
 				: undefined;
 
 			if (replyToMessage) {
-				replyToMessage.reply(body.message);
+				await replyToMessage.reply(body.message);
 			} else {
-				channel.send(body.message);
+				await channel.send(body.message);
 			}
 
 			return "Success!";

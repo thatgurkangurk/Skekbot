@@ -109,6 +109,14 @@ const command: CommandInterface = {
 				});
 			}
 
+			switch (id) {
+				case "a":
+					console.log("v");
+					break;
+				case "b":
+					console.log("a");
+			}
+
 			if (against.bot || against === initiator) {
 				const botChoice = Object.keys(options)[Math.floor(Math.random() * Object.keys(options).length)];
 				if (typeof botChoice !== "string") throw new Error("Bot choice is not a string.");

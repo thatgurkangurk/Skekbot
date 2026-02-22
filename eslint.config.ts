@@ -5,7 +5,14 @@ import tseslint from "typescript-eslint";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
-	tseslint.configs.recommended,
+	tseslint.configs.recommendedTypeChecked,
+	{
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+			},
+		},
+	},
 	{
 		files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
 		plugins: {
@@ -16,7 +23,7 @@ export default defineConfig([
 		extends: ["js/recommended"],
 		languageOptions: {
 			globals: {
-				...globals.node,
+				...globals.bunBuiltin,
 			},
 		},
 
@@ -37,7 +44,6 @@ export default defineConfig([
 			"no-shadow": "warn",
 			"no-unused-expressions": "warn",
 			"yoda": "warn",
-			"no-restricted-syntax": ["error", "SwitchStatement"],
 			"no-constant-condition": "warn",
 
 			"stylistic/indent": ["warn", "tab"],
@@ -45,6 +51,9 @@ export default defineConfig([
 				"avoidEscape": true,
 			}],
 			"stylistic/semi": ["error", "always"],
+
+			"@typescript-eslint/require-await": "off",
+			"@typescript-eslint/no-misused-promises": "off",
 
 			"@typescript-eslint/no-unused-vars": [
 				"warn",
@@ -59,13 +68,24 @@ export default defineConfig([
 				}
 			],
 			"@typescript-eslint/no-explicit-any": ["off"],
+			"@typescript-eslint/no-floating-promises": "error",
+
 			"no-unused-vars": ["off"],
 		},
 	},
 	{
-		files: ["./Source/Web/**/*.{js,mjs,cjs,ts,mts,cts}"],
+		files: ["./Source/Web/Static/*.{js,mjs,cjs,ts,mts,cts}"],
 		languageOptions: {
 			globals: globals.browser
+		},
+		rules: {
+			"@typescript-eslint/no-unsafe-assignment": "off",
+			"@typescript-eslint/no-unsafe-call": "off",
+			"@typescript-eslint/no-unsafe-member-access": "off",
+			"@typescript-eslint/no-redundant-type-constituents": "off",
+			"@typescript-eslint/no-unnecessary-type-assertion": "off",
+			"@typescript-eslint/no-unsafe-return": "off",
+			"@typescript-eslint/no-unsafe-argument": "off",
 		}
 	}
 ]);

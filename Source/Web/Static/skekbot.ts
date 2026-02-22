@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
 import { edenFetch } from "@elysiajs/eden";
 import type { App } from "../server";
 

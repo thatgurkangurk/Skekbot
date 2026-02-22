@@ -8,8 +8,8 @@ const TOKEN = env.BOT_TOKEN;
 
 client.once(Events.ClientReady, (readyClient) => {
 	console.log(`Logged in as ${readyClient.user.tag}`);
-	LoadModules(client);
-	LoadCommands(client);
+	void LoadModules(client);
+	void LoadCommands(client);
 });
 
-client.login(TOKEN);
+void client.login(TOKEN);
