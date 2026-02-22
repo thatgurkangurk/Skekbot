@@ -84,7 +84,6 @@ const command: CommandInterface = {
 
 		const collector = response.resource?.message?.createMessageComponentCollector({
 			componentType: ComponentType.Button,
-			filter: buttonInteraction => buttonInteraction.user.id === initiator.id || buttonInteraction.user.id === against.id,
 		});
 
 		if (!collector) {
@@ -104,7 +103,7 @@ const command: CommandInterface = {
 			if (user === initiator) user1Choice = id;
 			else if (user === against) user2Choice = id;
 			else {
-				await buttonInteraction.reply({
+				return await buttonInteraction.reply({
 					content: "You aren't a part of this battle!",
 					flags: [MessageFlags.Ephemeral]
 				});
