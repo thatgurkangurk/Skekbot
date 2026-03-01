@@ -14,10 +14,12 @@ async function onMessage(message: Message) {
 	let startIndex;
 
 	const words = lowerContent.split(" ");
+	let index = 0;
 	for (const word of words) {
+		index += word.length + 1;
 		if (word === "i") {
 			if (words[words.indexOf(word) + 1] === "am") {
-				startIndex = lowerContent.indexOf("am") + word.length + 1;
+				startIndex = index + "am".length + 1;
 				break;
 			}
 		}
