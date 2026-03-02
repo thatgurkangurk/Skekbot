@@ -11,22 +11,20 @@ async function onMessage(message: Message) {
 	const content = message.cleanContent;
 	const lowerContent = content.toLowerCase();
 
-	let startIndex;
+	let startIndex: number | undefined;
+	let currentIndex = 0;
 
 	const words = lowerContent.split(" ");
-	let index = 0;
-	for (const word of words) {
-		index += word.length + 1;
-		if (word === "i") {
-			if (words[words.indexOf(word) + 1] === "am") {
-				startIndex = index + "am".length + 1;
-				break;
-			}
-		}
+	for (let i = 0; i < words.length; i++) {
+		const word = words[i];
+		if (!word) break;
 
-		if (IM.includes(word)) {
-			startIndex = lowerContent.indexOf(word) + word.length + 1;
-			break;
+		currentIndex += word.length + 1;
+
+		if (word === "i" && words[i + 1] === "am") {
+			startIndex = currentIndex + 2;
+		} else if (IM.includes(word)) {
+			startIndex = currentIndex;
 		}
 	}
 
