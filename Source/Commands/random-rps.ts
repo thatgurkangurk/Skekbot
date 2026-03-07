@@ -10,7 +10,7 @@ import {
 	options,
 	RockPaperScissorsGame,
 	type Choice,
-} from "../Utility/rock.ts";
+} from "$lib/rock.ts";
 
 const command: CommandInterface = {
 	data: new SlashCommandBuilder()
