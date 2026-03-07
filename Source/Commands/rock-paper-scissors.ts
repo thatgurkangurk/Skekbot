@@ -6,9 +6,11 @@ import {
 	SlashCommandBuilder,
 } from "discord.js";
 import type { CommandInterface } from "../Types/command-interface.ts";
-import { options, RockPaperScissorsGame, type Choice } from "../Utility/rock.ts";
-
-
+import {
+	options,
+	RockPaperScissorsGame,
+	type Choice,
+} from "../Utility/rock.ts";
 
 const command: CommandInterface = {
 	data: new SlashCommandBuilder()

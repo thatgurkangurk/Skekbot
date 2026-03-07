@@ -1,4 +1,9 @@
-import { MessageFlags, type ButtonInteraction, type ChatInputCommandInteraction, type User } from "discord.js";
+import {
+	MessageFlags,
+	type ButtonInteraction,
+	type ChatInputCommandInteraction,
+	type User,
+} from "discord.js";
 
 export const options = {
 	Rock: "🪨",
