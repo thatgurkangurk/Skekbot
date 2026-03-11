@@ -1,6 +1,7 @@
 import { Events, Message } from "discord.js";
 import type { ModuleInterface } from "../Types/module-interface";
-import nlp from "compromise";
+import winkNLP, { type ItemToken, type ItsFunction } from "wink-nlp";
+import model from "wink-eng-lite-web-model";
 
 const HIDDEN_USER_ID = "475851244737396740";
 
@@ -10,46 +11,62 @@ const ALLOWED_ABBREVIATIONS: Record<string, string> = {
 	imgs: "images",
 };
 
+const nlp = winkNLP(model);
+const { its } = nlp;
+
 function extractNounsWithCorrectVerb(text: string): string | null {
-	const doc = nlp(text);
+	const doc = nlp.readDoc(text);
 
-	// remove pronouns
-	doc.match("#Pronoun").remove("#Pronoun");
+	const phrases: { text: string; plural: boolean }[] = [];
 
-	// get all nouns
-	const nounData = (doc.nouns() as any).json() as {
-		text: string;
-		isPlural?: boolean;
-	}[];
-	if (nounData.length === 0) return null;
+	let currentWords: string[] = [];
+	let plural = false;
 
-	// map and clean nouns
-	const nouns = nounData
-		.map(({ text: phrase }) => {
-			// remove a/an/the
-			const cleaned = phrase.replace(/\b(a|an|the)\b/gi, "").trim();
+	doc.tokens().each((token: ItemToken) => {
+		const pos = token.out(its.pos);
+		const word = token.out(its.value);
+		const lemma = token.out(its.lemma as ItsFunction<string>);
+
+		const isPhrasePart = pos === "NOUN" || pos === "PROPN" || pos === "ADJ";
+
+		if (isPhrasePart) {
+			currentWords.push(word);
+
+			if (pos === "NOUN") {
+				plural = word !== lemma;
+			}
+			return;
+		}
+
+		flush();
+	});
+
+	flush();
+
+	if (phrases.length === 0) return null;
+
+	const nouns = phrases
+		.map(({ text }) => {
+			const cleaned = text.replace(/\b(a|an|the)\b/gi, "").trim();
 			if (!cleaned) return null;
 
-			// pick last word for natural phrasing
-			let headNoun = cleaned.split(" ").pop() || cleaned;
+			let head = cleaned.split(/\s+/).pop() ?? cleaned;
 
-			// expand known abbreviations
-			headNoun = ALLOWED_ABBREVIATIONS[headNoun.toLowerCase()] || headNoun;
+			head = ALLOWED_ABBREVIATIONS[head.toLowerCase()] ?? head;
 
-			return headNoun;
+			return cleaned.replace(/\S+$/, head);
 		})
-		.filter(Boolean);
+		.filter(Boolean) as string[];
 
 	if (nouns.length === 0) return null;
 
-	// decide verb: plural if more than 1 noun OR last noun is plural
-	const lastNoun = nounData[nounData.length - 1];
-	const isPlural = nouns.length > 1 || lastNoun?.isPlural;
+	const lastPhrase = phrases[phrases.length - 1];
+	const isPlural = nouns.length > 1 || lastPhrase?.plural;
 
-	// join nouns naturally
 	let nounText: string;
+
 	if (nouns.length === 1) {
-		nounText = nouns[0] || "";
+		nounText = nouns[0]!;
 	} else if (nouns.length === 2) {
 		nounText = `${nouns[0]} and ${nouns[1]}`;
 	} else {
@@ -58,6 +75,18 @@ function extractNounsWithCorrectVerb(text: string): string | null {
 	}
 
 	return `${nounText} ${isPlural ? "are" : "is"}`;
+
+	function flush() {
+		if (!currentWords.length) return;
+
+		phrases.push({
+			text: currentWords.join(" "),
+			plural,
+		});
+
+		currentWords = [];
+		plural = false;
+	}
 }
 
 async function onMessage(message: Message) {
