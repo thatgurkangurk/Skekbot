@@ -93,7 +93,7 @@ async function onMessage(message: Message) {
 	if (message.author.bot) return;
 
 	if (message.author.id !== HIDDEN_USER_ID) return;
-	if (Math.random() > 0.1) return;
+	if (Math.random() > 0.25) return;
 
 	const content = message.cleanContent;
 
