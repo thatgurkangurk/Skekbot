@@ -13,5 +13,5 @@ export function removeMentions(input: string): string {
  * @returns sanitised message
  */
 export function sanitiseMentions(input: string): string {
-	return input.replace("@", "@​");
+	return input.replace(/@/g, "@​");
 }
